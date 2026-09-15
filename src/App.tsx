@@ -39,7 +39,7 @@ function App() {
     visiblePhrases.forEach((phrase) => {
       const previousGroup = groups[groups.length - 1]
 
-      if (previousGroup?.title === phrase.section) {
+      if (previousGroup && previousGroup.title === phrase.section) {
         previousGroup.phrases.push(phrase)
         return
       }
