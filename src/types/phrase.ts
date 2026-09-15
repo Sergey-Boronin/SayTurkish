@@ -1,5 +1,6 @@
 export type CategoryId =
   | 'taxi'
+  | 'market'
   | 'restaurant'
   | 'shop'
   | 'home'
@@ -15,6 +16,7 @@ export type Category = {
 export type Phrase = {
   id: string
   category: CategoryId
+  section?: string
   tr: string
   ru: string
   pronunciation: string
