@@ -33,8 +33,33 @@ function App() {
     )
   }, [activeCategory, normalizedQuery])
 
+  const phraseGroups = useMemo(() => {
+    const groups: { title?: string; phrases: Phrase[] }[] = []
+
+    visiblePhrases.forEach((phrase) => {
+      const previousGroup = groups[groups.length - 1]
+
+      if (previousGroup?.title === phrase.section) {
+        previousGroup.phrases.push(phrase)
+        return
+      }
+
+      groups.push({
+        title: phrase.section,
+        phrases: [phrase],
+      })
+    })
+
+    return groups
+  }, [visiblePhrases])
+
   const activeCategoryTitle =
     categories.find((category) => category.id === activeCategory)?.title ?? ''
+
+  const categorySubtitle =
+    activeCategory === 'market'
+      ? 'Купить, взвесить и понять цену'
+      : 'Нужная фраза за пару секунд'
 
   return (
     <main className="min-h-svh bg-[var(--app-bg)] text-slate-950">
@@ -66,7 +91,11 @@ function App() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               className="min-w-0 flex-1 bg-transparent text-base font-medium text-slate-950 outline-none placeholder:text-slate-400"
-              placeholder="Поиск: сдача, налево, adres"
+              placeholder={
+                activeCategory === 'market'
+                  ? 'Поиск: помидор, 300, domates'
+                  : 'Поиск: сдача, налево, adres'
+              }
               type="search"
               aria-label="Поиск по фразам"
             />
@@ -84,14 +113,14 @@ function App() {
         </header>
 
         <section className="flex-1 px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+24px)]">
-          <div className="mb-3 flex items-end justify-between gap-3">
+          <div className="mb-4 flex items-end justify-between gap-3">
             <div>
               <p className="text-sm font-bold text-slate-500">
                 {activeCategoryTitle}
               </p>
               <h2 className="text-lg font-black leading-tight tracking-[0]">
                 {visiblePhrases.length
-                  ? 'Нужная фраза за пару секунд'
+                  ? categorySubtitle
                   : 'Пока ничего не найдено'}
               </h2>
             </div>
@@ -103,14 +132,30 @@ function App() {
           </div>
 
           {visiblePhrases.length ? (
-            <div className="grid gap-3">
-              {visiblePhrases.map((phrase) => (
-                <PhraseCard
-                  key={phrase.id}
-                  phrase={phrase}
-                  onSpeak={() => speak(phrase.tr)}
-                  onShow={() => setSelectedPhrase(phrase)}
-                />
+            <div className="grid gap-7">
+              {phraseGroups.map((group, groupIndex) => (
+                <div
+                  key={`${group.title ?? 'phrases'}-${groupIndex}`}
+                  className="grid gap-3"
+                >
+                  {group.title ? (
+                    <div className="flex items-center gap-3">
+                      <h3 className="shrink-0 text-[0.8rem] font-black uppercase tracking-[0.08em] text-teal-800">
+                        {group.title}
+                      </h3>
+                      <div className="h-px flex-1 bg-slate-200" />
+                    </div>
+                  ) : null}
+
+                  {group.phrases.map((phrase) => (
+                    <PhraseCard
+                      key={phrase.id}
+                      phrase={phrase}
+                      onSpeak={() => speak(phrase.tr)}
+                      onShow={() => setSelectedPhrase(phrase)}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           ) : (
