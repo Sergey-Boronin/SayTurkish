@@ -26,6 +26,13 @@ export const phrases: Phrase[] = [
     pronunciation: 'бурада́ лютфе́н',
   },
   {
+    id: 'taxi-get-out-here',
+    category: 'taxi',
+    tr: 'Burada inelim, lütfen.',
+    ru: 'Давайте выйдем здесь, пожалуйста.',
+    pronunciation: 'бурада́ инэли́м, лютфе́н',
+  },
+  {
     id: 'taxi-stop-here',
     category: 'taxi',
     tr: 'Burada durun, lütfen.',
